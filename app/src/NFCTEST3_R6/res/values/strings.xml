@@ -1,0 +1,126 @@
+<resources>
+    <string name="app_name">PFR NFC</string>
+    <string name="enable_mailbox">Enable Mailbox</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="refresh">Refresh</string>
+    <string name="mailbox_active">Mailbox Active</string>
+    <string name="turn_on_nfc">TURN ON NFC</string>
+    <string name="tagName">TextView</string>
+    <string name="memory_size">Memory Size</string>
+    <string name="tag_name">Tag Name</string>
+    <string name="uid">uiD</string>
+    <string name="nfc_off">NFC OFF</string>
+    <string name="pwd">PWD</string>
+    <string name="ftm">FTM</string>
+    <string name="read">Read</string>
+    <string name="ftm_message">FTM Message</string>
+    <string name="write">WRITE1</string>
+    <string name="check">Check1</string>
+    <string name="write_message">Write message</string>
+    <string name="write_2">WRITE 3</string>
+    <string name="power_factor_text">Power Factor</string>
+    <string name="cos_text">Cos θ</string>
+    <string name="apparent_power_text">Apparent Power</string>
+    <string name="message">Message</string>
+    <string name="voltage_text">Voltage</string>
+    <string name="frequency_text">Frequency</string>
+    <string name="voltage_thd">Voltage THD</string>
+    <string name="currentthd">CurrentTHD</string>
+    <string name="required_power">Required Power</string>
+    <string name="pfrnx">PFRNX</string>
+    <string name="active_power_text">Active Power</string>
+    <string name="reactive_power_text">Reactive Power</string>
+    <string name="thd_voltage">THD Voltage</string>
+    <string name="current_text">Current</string>
+    <string name="frequency">Frequency</string>
+    <string name="voltage">Voltage</string>
+    <string name="required_var">Required VAR</string>
+    <string name="apparent_power">Apparent Power</string>
+    <string name="measurement">MEASUREMENT</string>
+    <string name="thd_current">THD Current</string>
+    <string name="power_factor">Power Factor</string>
+    <string name="auto_mode">AUTO MODE</string>
+    <string name="manual_mode">MANUAL MODE</string>
+    <string name="alarm">ALARM</string>
+    <string name="step_output">STEP OUTPUT</string>
+    <string name="nothing">--</string>
+    <string name="action">action</string>
+    <string-array name="volt_sys">
+        <item>L-N</item>
+        <item>L-L</item>
+    </string-array>
+    <string-array name="freq">
+        <item>50Hz</item>
+        <item>60Hz</item>
+    </string-array>
+    <string-array name="SystemID">
+        <item>Comm Slave</item>
+        <item>Sync Master</item>
+        <item>Sync Slave</item>
+    </string-array>
+    <string-array name="inputControl">
+        <item>No</item>
+        <item>Yes</item>
+    </string-array>
+    <string-array name="cos">
+        <item>  </item>
+        <item>CAP</item>
+        <item>IND</item>
+    </string-array>
+    <string-array name="ck">
+        <item>Manual</item>
+        <item>Auto</item>
+    </string-array>
+    <string-array name="switch_option">
+        <item>Manual</item>
+        <item>Rotational</item>
+        <item>Automatic</item>
+        <item>Four-Quadrant</item>
+    </string-array>
+
+    <string-array name="baudrate_option">
+        <item>2400</item>
+        <item>4800</item>
+        <item>9600</item>
+        <item>19200</item>
+        <item>38400</item>
+        <item>57600</item>
+    </string-array>
+    <string-array name="parity_option">
+        <item>None</item>
+        <item>Even</item>
+        <item>Odd</item>
+    </string-array>
+    <string-array name="stopbit_option">
+        <item>1 Stop Bit</item>
+        <item>2 Stop Bits</item>
+    </string-array>
+
+    <string-array name="ratestep_option">
+        <item>Disable</item>
+        <item>1 step</item>
+        <item>2 steps</item>
+        <item>3 steps</item>
+        <item>4 steps</item>
+        <item>6 steps</item>
+        <item>8 steps</item>
+        <item>12 steps</item>
+        <item>16 steps</item>
+    </string-array>
+
+    <string-array name="ratestep16_option">
+        <item>Disable</item>
+        <item>1 step</item>
+        <item>2 steps</item>
+        <item>3 steps</item>
+        <item>4 steps</item>
+        <item>6 steps</item>
+        <item>8 steps</item>
+        <item>12 steps</item>
+        <item>16 steps</item>
+        <item>Alarm Output</item>
+        <item>Fan Output</item>
+    </string-array>
+
+</resources>

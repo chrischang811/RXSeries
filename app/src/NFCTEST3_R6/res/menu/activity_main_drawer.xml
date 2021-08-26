@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:id="@+id/group_menu">
+        <!--<item android:id="@+id/nav_item_one"
+            android:title="Test" />-->
+        <item android:id="@+id/nav_item_two"
+            android:title="Main System" />
+        <item android:id="@+id/nav_item_three"
+            android:title="Harmonic" />
+    </group>
+
+   <!--<group android:id="@+id/Setting_group_menu">
+       <item android:id="@+id/nav_item_four"
+           android:title="System" />
+       <item android:id="@+id/nav_item_five"
+           android:title="Alarm" />
+    </group>-->
+    <item android:title="Setting">
+        <menu>
+            <item android:id="@+id/nav_item_four"
+                android:title="System" />
+            <item android:id="@+id/nav_item_five"
+                android:title="Alarm" />
+            <item android:id="@+id/nav_item_six"
+                android:title="Clock"/>
+            <item android:id="@+id/nav_item_seven"
+                android:title="Communication"/>
+            <item android:id="@+id/nav_item_eight"
+                android:title="Rate Step"/>
+            <item android:id="@+id/nav_item_fourteen"
+                android:title="Step On"/>
+        </menu>
+    </item>
+    <item android:title="Record">
+        <menu>
+            <item android:id="@+id/nav_item_nine"
+                android:title="Alarm Record" />
+            <item android:id="@+id/nav_item_ten"
+                android:title="System Record" />
+            <item android:id="@+id/nav_item_eleven"
+                android:title="Step Record" />
+        </menu>
+    </item>
+
+    <item android:title="Step On Record">
+        <menu>
+            <item android:id="@+id/nav_item_twelve"
+                android:title="Step on Timer" />
+            <item android:id="@+id/nav_item_thirteen"
+                android:title="Step on Counter" />
+        </menu>
+    </item>
+</menu>

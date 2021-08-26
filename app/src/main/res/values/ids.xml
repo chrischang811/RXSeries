@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="r1" type="id" />
+    <item name="function" type="id" />
+    <item name="frequency_text" type="id" />
+    <item name="op_reset1_text" type="id" />
+    <item name="led2_text" type="id" />
+    <item name="led1_text" type="id" />
+    <item name="op_link1_text" type="id" />
+</resources>

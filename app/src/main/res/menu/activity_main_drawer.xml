@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:id="@+id/group_menu">
+        <item android:id="@+id/nav_item_one"
+            android:title="Measurement" />
+
+    </group>
+
+    <item android:title="Setting">
+        <menu>
+            <item android:id="@+id/nav_item_two"
+                android:title="Overcurrent" />
+            <item android:id="@+id/nav_item_three"
+                android:title="Clock"/>
+            <item android:id="@+id/nav_item_four"
+                android:title="Earth Fault"/>
+            <item android:id="@+id/nav_item_five"
+                android:title="Thermal Overload"/>
+            <item android:id="@+id/nav_item_six"
+                android:title="Cold Load"/>
+            <item android:id="@+id/nav_item_seven"
+                android:title="Function"/>
+        </menu>
+    </item>
+
+
+    <item android:title="Record">
+        <menu>
+            <item android:id="@+id/nav_item_eight"
+                android:title="System" />
+
+        </menu>
+    </item>
+</menu>

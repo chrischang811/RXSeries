@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:visibility="visible"
+    tools:context=".ftmPage">
+
+    <TextView
+        android:id="@+id/txtFTMMsg"
+        android:layout_width="334dp"
+        android:layout_height="209dp"
+        android:layout_marginBottom="56dp"
+        android:text="@string/ftm_message"
+        android:textIsSelectable="false"
+        app:layout_constraintBottom_toTopOf="@+id/btn_write_ftm"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/btn_write_clock"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="40dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="28dp"
+        android:text="@string/write"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/btn_check_ftm"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/btn_check_ftm"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="28dp"
+        android:text="@string/check"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <EditText
+        android:id="@+id/editText_write"
+        android:layout_width="331dp"
+        android:layout_height="189dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginBottom="28dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        app:layout_constraintBottom_toTopOf="@+id/txtFTMMsg"
+        app:layout_constraintStart_toStartOf="parent"
+        android:autofillHints="" tools:targetApi="o" />
+
+    <Button
+        android:id="@+id/btn_write_ftm2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="40dp"
+        android:layout_marginBottom="8dp"
+        android:text="@string/write_2"
+        app:layout_constraintBottom_toTopOf="@+id/btn_write_ftm"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/btn_write_ftm3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginBottom="8dp"
+        android:text="ct_8000"
+        app:layout_constraintBottom_toTopOf="@+id/btn_check_ftm"
+        app:layout_constraintStart_toEndOf="@+id/btn_write_ftm2" />
+
+    <Button
+        android:id="@+id/btn_write_ftm4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="36dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:text="ct_1"
+        app:layout_constraintBottom_toTopOf="@+id/btn_write_ftm"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.032"
+        app:layout_constraintStart_toEndOf="@+id/btn_write_ftm3" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

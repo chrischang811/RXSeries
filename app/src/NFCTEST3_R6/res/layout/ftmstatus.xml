@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#111010"
+    android:visibility="visible">
+
+    <TextView
+        android:id="@+id/deviceVers"
+        android:layout_width="250dp"
+        android:layout_height="41dp"
+        android:layout_marginStart="80dp"
+        android:layout_marginTop="492dp"
+        android:layout_marginBottom="198dp"
+        android:fontFamily="@font/doppio_one"
+        android:gravity="center_horizontal"
+        android:text="Device Version"
+        android:textColor="@android:color/white"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/welcometext"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:fontFamily="@font/doppio_one"
+        android:text="Welcome"
+        android:textColor="#FFFFFF"
+        android:textSize="36sp"
+        android:textStyle="bold"
+        android:typeface="serif"
+        tools:layout_editor_absoluteX="124dp"
+        tools:layout_editor_absoluteY="160dp" />
+
+    <TextView
+        android:id="@+id/methodtext"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/welcometext"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginStart="55dp"
+        android:layout_marginTop="250dp"
+        android:layout_marginBottom="382dp"
+        android:layout_weight="0"
+        android:fontFamily="@font/doppio_one"
+        android:gravity="center_horizontal"
+        android:text="Please tag on the device to obtain your device information"
+        android:textColor="#FFFFFF"
+        android:textSize="20dp"
+        android:typeface="serif"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/setting"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="151dp"
+        android:layout_marginTop="600dp"
+        android:layout_marginBottom="75dp"
+        android:background="@drawable/rouded_button"
+        android:text="CONTINUE"
+        android:textStyle="bold"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/deviceInfo"
+        android:layout_width="188dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="106dp"
+        android:layout_marginTop="400dp"
+        android:layout_marginBottom="252dp"
+        android:fontFamily="@font/doppio_one"
+        android:gravity="center_horizontal"
+        android:text="Device Type"
+        android:textColor="@android:color/white"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
