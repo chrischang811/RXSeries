@@ -121,7 +121,6 @@ public class thermal_overload extends BaseActivity implements TagDiscovery.onTag
             }
         });
 
-        //define spinner & editText
         editIo = (EditText) findViewById(R.id.edit_Io);
 
         spinner1=(Spinner)findViewById(R.id.Io_delay_option);
