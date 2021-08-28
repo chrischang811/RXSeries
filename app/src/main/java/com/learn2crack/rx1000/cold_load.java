@@ -10,7 +10,6 @@ import android.nfc.NfcAdapter;
 import android.nfc.Tag;
 import android.os.Bundle;
 import android.os.Handler;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -35,7 +34,7 @@ import static android.os.SystemClock.sleep;
 import static com.st.st25sdk.STException.STExceptionCode.CMD_FAILED;
 
 
-public class thermal_overload extends BaseActivity implements TagDiscovery.onTagDiscoveryCompletedListener{
+public class cold_load extends BaseActivity implements TagDiscovery.onTagDiscoveryCompletedListener{
 
     private final int ERROR     = -1;
     private final int TRY_AGAIN = 0;
@@ -60,14 +59,14 @@ public class thermal_overload extends BaseActivity implements TagDiscovery.onTag
     static private NFCTag mftmTag;
     static private NfcAdapter mNfcAdapter;
     private PendingIntent mPendingIntent;
-    private static final String TAG = thermal_overload.class.getSimpleName();
+    private static final String TAG = cold_load.class.getSimpleName();
     CRC16checker crccheck=new CRC16checker();
     DecimalFormat df2 = new DecimalFormat("0.00");
 
     Handler handler = new Handler();
     private Button writebtn, readbtn;
     private Spinner spinner1,spinner2;
-    private EditText editI,editTl,editKlo,editTrip,editAlarm;
+    private EditText editIo,editTlo,editKtlo,editIo2,editTlo2;
     private boolean readRun = false;
     private boolean writeRun = false;
 
@@ -101,11 +100,12 @@ public class thermal_overload extends BaseActivity implements TagDiscovery.onTag
         super.onCreate(savedInstanceState);
         FrameLayout contentFrameLayout = (FrameLayout) findViewById(R.id.content_frame);
         getLayoutInflater().inflate(R.layout.thermal, contentFrameLayout);
-        thermal_overload.this.setTitle("THERMAL OVERLOAD");
+      //  cold_load.this.setTitle("THERMAL OVERLOAD");
         mNfcAdapter = NfcAdapter.getDefaultAdapter(this); //check NFC hardware available
         mPendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
-
-
+        spinner1=(Spinner)findViewById(R.id.IƟ_spinner);
+        spinner1.setOnItemSelectedListener(listener);
+        /*
         readbtn = findViewById(R.id.btn_read_ftm);
         readbtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -120,20 +120,23 @@ public class thermal_overload extends BaseActivity implements TagDiscovery.onTag
             }
         });
 
-        editI = (EditText) findViewById(R.id.edit_IƟ);
+        editIo = (EditText) findViewById(R.id.edit_Io);
 
-        spinner1=(Spinner)findViewById(R.id.IƟ_spinner);
+        spinner1=(Spinner)findViewById(R.id.Io_delay_option);
         spinner1.setOnItemSelectedListener(listener);
 
-        editTl = (EditText) findViewById(R.id.edit_tIƟ);
+        editTlo = (EditText) findViewById(R.id.edit_tlo);
 
-        editKlo=(EditText)findViewById(R.id.edit_kIƟ);
+        editKtlo=(EditText)findViewById(R.id.edit_ktIo);
 
-        editTrip = (EditText) findViewById(R.id.edit_trip);
+        spinner2=(Spinner)findViewById(R.id.Io2_op);
+        spinner2.setOnItemSelectedListener(listener);
 
-        editAlarm = (EditText) findViewById(R.id.edit_alarm);
+        editIo2 = (EditText) findViewById(R.id.edit_Io2);
 
-      /*  writebtn = findViewById(R.id.btn_write_ef);
+        editTlo2 = (EditText) findViewById(R.id.edit_tIo2);
+
+        writebtn = findViewById(R.id.btn_write_ef);
         writebtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -464,14 +467,14 @@ public class thermal_overload extends BaseActivity implements TagDiscovery.onTag
         }
 
         // int i = 1;
-        mBuffer = new byte[19];
+        mBuffer = new byte[21];
         mBuffer [0] = (byte)0x01;
         mBuffer [1] = (byte)0x10;
         mBuffer [2] = (byte)0x01;
-        mBuffer [3] = (byte)0x1e;
+        mBuffer [3] = (byte)0x08;
         mBuffer [4] = (byte)0x00;
-        mBuffer [5] = (byte)0x05;
-        mBuffer [6] = (byte)0x0a;
+        mBuffer [5] = (byte)0x06;
+        mBuffer [6] = (byte)0x0c;
         mBuffer [7] = (byte)Integer.parseInt(Io_1,16);
         mBuffer [8] = (byte)Integer.parseInt(Io_0,16);
         mBuffer [9] = (byte)0x00;
@@ -482,8 +485,10 @@ public class thermal_overload extends BaseActivity implements TagDiscovery.onTag
         mBuffer [14] = (byte)Integer.parseInt(ktlo_0,16);
         mBuffer [15] = (byte)Integer.parseInt(Io2_1,16);
         mBuffer [16] = (byte)Integer.parseInt(Io2_0,16);
-        mBuffer [17] = (byte)Integer.parseInt(crc_high,16);
-        mBuffer [18] = (byte)Integer.parseInt(crc_low,16);
+        mBuffer [17] = (byte)Integer.parseInt(tlo2_1,16);
+        mBuffer [18] = (byte)Integer.parseInt(tlo2_0,16);
+        mBuffer [19] = (byte)Integer.parseInt(crc_high,16);
+        mBuffer [20] = (byte)Integer.parseInt(crc_low,16);
 
         Log.d(TAG, "Mikro: delay type " + mBuffer[10]);
         mAction = ActionCode.SINGLE;
@@ -503,10 +508,10 @@ public class thermal_overload extends BaseActivity implements TagDiscovery.onTag
         mBuffer [3] = (byte)0x1E;
         mBuffer [4] = (byte)0x00;
         mBuffer [5] = (byte)0x05;
-        //0xF645 when address start from 011e
+        //0xF645 when address start from 0108
       //  mBuffer [6] = (byte)0xe4;
        // mBuffer [7] = (byte)0x33;
-        //0xB245 when address start from 021e
+        //0xB245 when address start from 0208
         mBuffer [6] = (byte)0xe4;
         mBuffer [7] = (byte)0x77;
 
@@ -586,7 +591,7 @@ public class thermal_overload extends BaseActivity implements TagDiscovery.onTag
                                 public void run() {
                                     writebtn.setBackgroundColor(getResources().getColor(R.color.colorAccent));
                                     //writebtn.setBackground(getResources().getDrawable(R.drawable.rouded_button));
-                                    Toast.makeText(thermal_overload.this, "FTM OFF", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(cold_load.this, "FTM OFF", Toast.LENGTH_SHORT).show();
                                 }
                             });
                         }
@@ -629,7 +634,7 @@ public class thermal_overload extends BaseActivity implements TagDiscovery.onTag
                             reset_ftm();
                             runOnUiThread(new Runnable() {
                                 public void run() {
-                                    Toast.makeText(thermal_overload.this, "FTM OFF", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(cold_load.this, "FTM OFF", Toast.LENGTH_SHORT).show();
                                 }
                             });
                         }
@@ -676,7 +681,7 @@ public class thermal_overload extends BaseActivity implements TagDiscovery.onTag
                                             public void run() {
                                                 //  Toast.makeText(MainActivity.this, "FTM is OFF", Toast.LENGTH_SHORT).show();
                                                 //Log.d(TAG, "Mikro: sync FTM is off");
-                                                new AlertDialog.Builder(thermal_overload.this)
+                                                new AlertDialog.Builder(cold_load.this)
                                                         .setTitle(R.string.app_name)
                                                         .setIcon(R.mipmap.ic_launcher)
                                                         .setMessage("\nReading Error, please check devide and try again\n")
@@ -722,7 +727,7 @@ public class thermal_overload extends BaseActivity implements TagDiscovery.onTag
                                     public void run() {
                                         readbtn.setBackgroundColor(getResources().getColor(R.color.colorAccent));
                                         //syncbtn.setBackgroundColor(getResources().getColor(R.color.colorGray));
-                                        Toast.makeText(thermal_overload.this, "FTM OFF", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(cold_load.this, "FTM OFF", Toast.LENGTH_SHORT).show();
                                     }
                                 });
                             }
@@ -734,7 +739,7 @@ public class thermal_overload extends BaseActivity implements TagDiscovery.onTag
                                     public void run() {
                                         writebtn.setBackgroundColor(getResources().getColor(R.color.colorAccent));
                                         //syncbtn.setBackgroundColor(getResources().getColor(R.color.colorGray));
-                                        Toast.makeText(thermal_overload.this, "FTM OFF", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(cold_load.this, "FTM OFF", Toast.LENGTH_SHORT).show();
                                     }
                                 });
 
@@ -810,7 +815,7 @@ public class thermal_overload extends BaseActivity implements TagDiscovery.onTag
                 Log.d(TAG, "Mikro:RF Mailbox Not Empty");
                 runOnUiThread(new Runnable() {
                     public void run() {
-                        Toast.makeText(thermal_overload.this, "RF Mailbox Not Empty", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(cold_load.this, "RF Mailbox Not Empty", Toast.LENGTH_SHORT).show();
                     }
                 });
                 reset_ftm();
@@ -974,6 +979,7 @@ public class thermal_overload extends BaseActivity implements TagDiscovery.onTag
         // String msg = "FTM Message: Total byte is " + no_message +"\n";
         Log.d(TAG, "Mikro: update ftm msg " + no_message);
         for(int x = 0; x <no_message; x++){
+
             tempMsg = message[x];
             // Log.d(TAG, "Mikro FTM Message: tempMsg  " +x +" "+tempMsg);
             int hex_int= (int)tempMsg & 0xff;
@@ -1002,9 +1008,9 @@ public class thermal_overload extends BaseActivity implements TagDiscovery.onTag
         final String finalMsg = msg;
         Log.d(TAG, "Mikro FTM finalMsg: " + finalMsg);
 
-        int I_set=0, I_option=0,tl_set=0,klo_set=0, trip_set=0, alarm_set=0;
-        double I_set_double=0,klo_set_double=0;
-        String IString="",tlString="",kloString="",tripString="",alarmString="";
+        int Io_set=0, Io_delay=0,tlo_set=0,ktlo_set=0, Io2_opt=0, Io2_set=0, tlo2_set=0;
+        double Io_set_double=0, tlo_set_double=0,ktlo_set_double=0,Io2_set_double=0, tlo2_set_double=0;
+        String IoString="",tloString="",ktloString="",Io2String="",tlo2String="";
         for(int i = 1; i < message.length; i+=2) {
             int value = Integer.parseInt(putftmpara[i], 16);
             if (value <= 15) {
@@ -1028,60 +1034,82 @@ public class thermal_overload extends BaseActivity implements TagDiscovery.onTag
 
             switch (i) {
                 case 3:
-                    I_set= Integer.parseInt(element, 16);
-                    Log.d(TAG, "Mikro FTM I_set:   " + I_set);
-                    if (I_set>0) {
-                        I_option=1;
-                        I_set_double = I_set / 100.00;
-                        IString = df2.format(I_set_double);
-                        Log.d(TAG, "Mikro IƟ converted: :   " + IString);
-                    }else {
-                        I_option=0;
-                    }
+                    Io_set= Integer.parseInt(element, 16);
+                    Io_set_double=Io_set/100.00;
+                    IoString=df2.format(Io_set_double);
+                    Log.d(TAG, "Mikro Io> converted: :   " + IoString);
                     break;
                 case 5:
-                    tl_set=Integer.parseInt(element, 16);
-                    tlString=Integer.toString(tl_set);
-                    Log.d(TAG, "Mikro tIƟ converted:   " + tlString);
+                    Io_delay=Integer.parseInt(element, 16);
+                    Log.d(TAG, "Mikro Io_delay:   " + Io_delay);
                     break;
                 case 7:
-                    klo_set=Integer.parseInt(element, 16);
-                    klo_set_double=klo_set/100.00;
-                    kloString=df2.format(klo_set_double);
-                    Log.d(TAG, "Mikro kIƟ String:   " + kloString);
+                    tlo_set=Integer.parseInt(element, 16);
+                    tlo_set_double=tlo_set/100.00;
+                    tloString=df2.format(tlo_set_double);
+                    Log.d(TAG, "Mikro tlo String:   " + tloString);
                     break;
                 case 9:
-                    trip_set=Integer.parseInt(element, 16);
-                    tripString=Integer.toString(trip_set);
-                    Log.d(TAG, "Mikro Trip String:   " + tripString);
+                    ktlo_set=Integer.parseInt(element, 16);
+                    ktlo_set_double=ktlo_set/100.00;
+                    ktloString=df2.format(ktlo_set_double);
+                    Log.d(TAG, "Mikro ktlo String:   " + ktloString);
                     break;
                 case 11:
-                    alarm_set=Integer.parseInt(element, 16);
-                    alarmString=Integer.toString(alarm_set);
-                    Log.d(TAG, "Mikro Alarm String:   " + alarmString);
+                    double Io2_set_d=Integer.parseInt(element,16);
+                    Log.d(TAG, "Mikro FTM Io2_set:   " + Io2_set_d);
+                    if (Io2_set_d>0){
+                        Io2_opt =1;
+                        Io2_set_double=Io2_set_d/100.00;
+                        Io2String= df2.format(Io2_set_double);
+                        //Log.d(TAG, "Mikro FTM Io2_set:   " + Io2String);
+                    } else {
+                        Io2_opt=0;
+                    }
+                    break;
+                case 13:
+                    tlo2_set=Integer.parseInt(element, 16);
+                    tlo2_set_double=tlo2_set/100.00;
+                    tlo2String=df2.format(tlo2_set_double);
+                    Log.d(TAG, "Mikro FTM tlo2_set:   " + tlo2String);
                     break;
 
             }
         }
 
-        final int finalIop=I_option;
-        final String  finalI=IString,finaltl=tlString,finalklo=kloString,finalTrip=tripString,finalAlarm=alarmString;
+        final int  finalIodelay=Io_delay,finalIo2op=Io2_opt;
+        final String  finalIo=IoString,finaltlo=tloString,finalktlo=ktloString,finalIo2=Io2String,finaltlo2=tlo2String;
         runOnUiThread(new Runnable() {
             public void run() {
 
-                editI.setText(finalI);
-                if (finalIop==0){
+                editIo.setText(finalIo);
+
+                if (finalIodelay==0){
                     spinner1.setSelection(0);
-                    editI.setText("0");
-                } else if (finalIop==1){
+                } else if (finalIodelay==1){
                     spinner1.setSelection(1);
-                    editI.setText(finalI);
+                }else if (finalIodelay==2){
+                    spinner1.setSelection(2);
+                }else if (finalIodelay==3){
+                    spinner1.setSelection(3);
+                }else if (finalIodelay==4){
+                    spinner1.setSelection(4);
+                }else if (finalIodelay==5){
+                    spinner1.setSelection(5);
                 }
 
-                editTl.setText(finaltl);
-                editKlo.setText(finalklo);
-                editTrip.setText(finalTrip);
-                editAlarm.setText(finalAlarm);
+                editTlo.setText(finaltlo);
+                editKtlo.setText(finalktlo);
+
+                if (finalIo2op==0){
+                    spinner2.setSelection(0);
+                    editIo2.setText("0");
+                } else if (finalIo2op==1){
+                    spinner2.setSelection(1);
+                    editIo2.setText(finalIo2);
+                }
+
+                editTlo2.setText(finaltlo2);
 
             }
         });
