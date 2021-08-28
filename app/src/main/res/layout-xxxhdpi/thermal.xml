@@ -73,7 +73,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <Button
-            android:id="@+id/btn_read_ftm"
+            android:id="@+id/btn_read_ther"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="80dp"
@@ -121,7 +121,7 @@
             android:background="#F7F7F7"
             android:ems="10"
             android:hint="1.00-1.50"
-            android:inputType="number"
+            android:inputType="number|numberDecimal"
             android:maxLength="4"
             android:textAlignment="center"
             android:textColor="#002D68"
@@ -143,7 +143,7 @@
             android:ems="10"
             android:hint="50-200"
             android:inputType="number"
-            android:maxLength="4"
+            android:maxLength="3"
             android:textAlignment="center"
             android:textColor="#002D68"
             android:textSize="18sp"
@@ -186,7 +186,7 @@
             android:ems="10"
             android:hint="50-200"
             android:inputType="number"
-            android:maxLength="4"
+            android:maxLength="3"
             android:textAlignment="center"
             android:textColor="#002D68"
             android:textSize="18sp"
@@ -224,7 +224,7 @@
             android:ems="10"
             android:hint="1-200"
             android:inputType="number"
-            android:maxLength="4"
+            android:maxLength="3"
             android:textAlignment="center"
             android:textColor="#002D68"
             android:textSize="18sp"
@@ -244,7 +244,7 @@
             android:background="#F7F7F7"
             android:ems="8"
             android:hint="0.5-10"
-            android:inputType="number"
+            android:inputType="number|numberDecimal"
             android:maxLength="4"
             android:textAlignment="center"
             android:textColor="#002D68"
@@ -349,7 +349,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <Button
-            android:id="@+id/btn_write_ftm"
+            android:id="@+id/btn_write_ther"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="264dp"

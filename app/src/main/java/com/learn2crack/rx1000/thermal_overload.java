@@ -52,10 +52,10 @@ public class thermal_overload extends BaseActivity implements TagDiscovery.onTag
     private int mMaxPayloadSizeRx = 32;
 
     private int mOffset;
-    private int get_Io,delay_spin_Io,get_tlo,get_ktlo, get_tlo2, get_Io2, delay_spin;
-    double get_Io_d, get_tlo_d, get_ktIo_d, get_Io2_d, get_tlo2_d;
-    private String Io_result[], tlo_result[],ktlo_result[], Io2_result[],tlo2_result[];
-    private String Io_1,Io_0,tlo_1,tlo_0,ktlo_1,ktlo_0,Io2_1,Io2_0,tlo2_1,tlo2_0,crc_low,crc_high;
+    private int get_I,delay_spin_I,get_tl,get_klo, get_trip, get_alarm;
+    double get_I_d, get_klo_d;
+    private String I_result[], tl_result[],klo_result[], trip_result[],alarm_result[];
+    private String I_1,I_0,tl_1,tl_0,klo_1,klo_0,trip_1,trip_0,alarm_1,alarm_0,crc_low,crc_high;
 
     static private NFCTag mftmTag;
     static private NfcAdapter mNfcAdapter;
@@ -66,7 +66,7 @@ public class thermal_overload extends BaseActivity implements TagDiscovery.onTag
 
     Handler handler = new Handler();
     private Button writebtn, readbtn;
-    private Spinner spinner1,spinner2;
+    private Spinner spinner1;
     private EditText editI,editTl,editKlo,editTrip,editAlarm;
     private boolean readRun = false;
     private boolean writeRun = false;
@@ -106,7 +106,7 @@ public class thermal_overload extends BaseActivity implements TagDiscovery.onTag
         mPendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
 
 
-        readbtn = findViewById(R.id.btn_read_ftm);
+        readbtn = findViewById(R.id.btn_read_ther);
         readbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -133,184 +133,144 @@ public class thermal_overload extends BaseActivity implements TagDiscovery.onTag
 
         editAlarm = (EditText) findViewById(R.id.edit_alarm);
 
-      /*  writebtn = findViewById(R.id.btn_write_ef);
+        writebtn = findViewById(R.id.btn_write_ther);
         writebtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(!writeRun){
-                String request = "0110010800060c";
+                String request = "0110010e00050a";
 
                 Log.d(TAG, "Mikro sent: " + request);
 
-                    //edit I> Setting
-                    if (TextUtils.isEmpty(editIo.getText().toString())) {
-                        editIo.setError("Io> setting cannot be empty");
-                        return;
+                    //edit IƟ> Setting
+                     String spin = String.valueOf(spinner1.getSelectedItem());
+                    Log.d(TAG, "Mikro result IƟ> spin " + spin);
+                    if (spin.equals("OFF")){
+                        editI.setText("0");
+                        I_1 = "00";
+                        I_0= "00";
                     } else {
-                        get_Io_d = Double.parseDouble((editIo.getText().toString()));
-                        Log.d(TAG, "Mikro result Io> setting from apps before process " + get_Io_d);
-                        get_Io = StepParam.getstep3(get_Io_d,10,1000);
-                        Log.d(TAG, "Mikro result Io> setting from apps after process " + get_Io);
-                        if (get_Io==0){
-                            if (get_Io_d<=0.1) {
-                                editIo.setError("I> setting cannot be less than 0.1");
-                            }else if (get_Io_d>10){
-                                editIo.setError("I> setting cannot be more than 10");
-                            }
-                            return;
-                        }
-                        String I1_display=df2.format(get_Io/100.00);
-                        editIo.setText(I1_display);
-                        Io_result= hexStringToStringArray(Integer.toHexString(get_Io));
-                        Io_1 = Io_result[0];
-                        Io_0= Io_result[1];
-                        Log.d(TAG, "Mikro result Io in Hex " + Io_1 +Io_0);
-                    }
-                    request = request + Io_1 + Io_0;
-                    Log.d(TAG, "Mikro after Io " + request);
-
-                    //Delay Type
-                    String delay = String.valueOf(spinner1.getSelectedItem());
-                    Log.d(TAG, "Mikro: delay spinner: " + delay);
-                    if (delay.equals("DT")) {
-                        delay_spin = 0;
-                        request = request + "0000";
-                        Log.d(TAG, "Mikro: delay spinner " + request);
-                    } else if (delay.equals("NI")) {
-                        delay_spin = 1;
-                        request = request + "0001";
-                        Log.d(TAG, "Mikro: delay spinner " + request);
-                    } else if (delay.equals("VI")) {
-                        delay_spin = 2;
-                        request = request + "0002";
-                        Log.d(TAG, "Mikro: delay spinner " + request);
-                    } else if (delay.equals("EI")) {
-                        delay_spin = 3;
-                        request = request + "0003";
-                        Log.d(TAG, "Mikro: delay spinner " + request);
-                    }else if (delay.equals("LTI")) {
-                        delay_spin = 4;
-                        request = request + "0004";
-                        Log.d(TAG, "Mikro: delay spinner " + request);
-                    } else if (delay.equals("NI1.3/10")) {
-                        delay_spin = 5;
-                        request = request + "0005";
-                        Log.d(TAG, "Mikro: delay spinner " + request);
-                    }
-
-                    //edit tIo> Setting
-                    if (TextUtils.isEmpty(editTlo.getText().toString())) {
-                        editTlo.setError("tIo> setting cannot be empty");
-                        return;
-                    } else {
-                        get_tlo_d = Double.parseDouble((editTlo.getText().toString()));
-                        Log.d(TAG, "Mikro result tIo> setting from apps before process " + get_tlo_d);
-                        get_tlo = StepParam.getstep1(get_tlo_d,3,10000);
-                        Log.d(TAG, "Mikro result tIo> setting from apps after process " + get_tlo);
-                        if (get_tlo==0){
-                            if (get_tlo_d<0.03) {
-                                editTlo.setError("tIo> setting cannot be less than 0.03");
-                            }else if (get_tlo_d>100){
-                                editTlo.setError("tIo> setting cannot be more than 100");
-                            }
-                            return;
-                        }
-                        String Tlo_display=df2.format(get_tlo/100.00);
-                        editTlo.setText(Tlo_display);
-                        tlo_result= hexStringToStringArray(Integer.toHexString(get_tlo));
-                        tlo_1 = tlo_result[0];
-                        tlo_0= tlo_result[1];
-                        Log.d(TAG, "Mikro result tIo> in Hex " + tlo_1 +tlo_0);
-                    }
-                    request = request + tlo_1 + tlo_0;
-                    Log.d(TAG, "Mikro after tIo> " + request);
-
-                    //edit ktIo> Setting
-                    if (TextUtils.isEmpty(editKtlo.getText().toString())) {
-                        editKtlo.setError("ktIo> setting cannot be empty");
-                        return;
-                    } else {
-                        get_ktIo_d = Double.parseDouble((editKtlo.getText().toString()));
-                        Log.d(TAG, "Mikro result ktIo> setting from apps before process " + get_ktIo_d);
-                        get_ktlo = StepParam.getstep0(get_ktIo_d,1,100);
-                        Log.d(TAG, "Mikro result ktIo> setting from apps after process " + get_ktlo);
-                        if (get_ktlo==0){
-                            if (get_ktIo_d<0.01) {
-                                editKtlo.setError("ktIo> setting cannot be less than 0.01");
-                            }else if (get_ktIo_d>1){
-                                editKtlo.setError("ktIo> setting cannot be more than 1");
-                            }
-                            return;
-                        }
-                        ktlo_result= hexStringToStringArray(Integer.toHexString(get_ktlo));
-                        ktlo_1 = ktlo_result[0];
-                        ktlo_0= ktlo_result[1];
-                        Log.d(TAG, "Mikro result ktIo> in Hex " + ktlo_1 +ktlo_0);
-                    }
-                    request = request + ktlo_1 + ktlo_0;
-                    Log.d(TAG, "Mikro after ktIo> " + request);
-
-                    //edit Io>> Setting
-                    String spin2 = String.valueOf(spinner2.getSelectedItem());
-                    if (spin2.equals("OFF")){
-                        editIo2.setText("0");
-                        Io2_1 = "00";
-                        Io2_0= "00";
-                    } else {
-                        if (TextUtils.isEmpty(editIo2.getText().toString())) {
-                            editIo2.setError("Io>> setting cannot be empty");
+                        if (TextUtils.isEmpty(editI.getText().toString())) {
+                            editI.setError("IƟ> setting cannot be empty");
                             return;
                         } else {
-                            get_Io2_d = Double.parseDouble((editIo2.getText().toString()));
-                            Log.d(TAG, "Mikro result Io2 setting from apps before process " + get_Io2_d);
-
-                            get_Io2 = StepParam.getstep2(get_Io2_d, 10, 10000);
-                            Log.d(TAG, "Mikro result Io2 setting from apps after process " + get_Io2);
-                            if (get_Io2 == 0) {
-                                if (get_Io2_d < 0.1) {
-                                    editIo2.setError("Io>> setting cannot be less than 0.5");
-                                } else if (get_Io2_d > 100) {
-                                    editIo2.setError("Io>> setting cannot be more than 100");
+                            get_I_d = Double.parseDouble((editI.getText().toString()));
+                            Log.d(TAG, "Mikro result IƟ> setting from apps before process " + get_I_d);
+                            get_I = StepParam.getstep2(get_I_d, 50, 1000);
+                            Log.d(TAG, "Mikro result IƟ> setting from apps after process " + get_I);
+                            if (get_I == 0) {
+                                if (get_I_d <= 0.5) {
+                                    editI.setError("IƟ> setting cannot be less than 0.5");
+                                } else if (get_I_d > 10) {
+                                    editI.setError("IƟ> setting cannot be more than 10");
                                 }
                                 return;
                             }
+                            String I1_display = df2.format(get_I / 100.00);
+                            editI.setText(I1_display);
+                            I_result = hexStringToStringArray(Integer.toHexString(get_I));
+                            I_1 = I_result[0];
+                            I_0 = I_result[1];
+                            Log.d(TAG, "Mikro result IƟ> in Hex " + I_1 + I_0);
                         }
-                        String I2_display=df2.format(get_Io2/100.00);
-                        editIo2.setText(I2_display);
-                        Io2_result= hexStringToStringArray(Integer.toHexString(get_Io2));
-                        Io2_1 = Io2_result[0];
-                        Io2_0= Io2_result[1];
-                        Log.d(TAG, "Mikro result Io2 in Hex " + Io2_1 +Io2_0);
                     }
-                    request = request + Io2_1 + Io2_0;
-                    Log.d(TAG, "Mikro after Io2 " + request);
+                    request = request + I_1 + I_0;
+                    Log.d(TAG, "Mikro after IƟ> " + request);
 
-                    //edit tIo>> Setting
-                    if (TextUtils.isEmpty(editTlo2.getText().toString())) {
-                        editTlo2.setError("tIo>> setting cannot be empty");
+                    //edit tIƟ> Setting
+                    if (TextUtils.isEmpty(editTl.getText().toString())) {
+                        editTl.setError("tIƟ> setting cannot be empty");
                         return;
                     } else {
-                        get_tlo2_d = Double.parseDouble((editTlo2.getText().toString()));
-                        Log.d(TAG, "Mikro result tIo>> setting from apps before process " + get_tlo2_d);
-                        get_tlo2 = StepParam.getstep3(get_tlo2_d,3,10000);
-                        Log.d(TAG, "Mikro result tIo>> setting from apps after process " + get_tlo2);
-                        if (get_tlo2==0){
-                            if (get_tlo2_d<0.03) {
-                                editTlo2.setError("tIo>> setting cannot be less than 0.03");
-                            }else if (get_tlo2_d>100){
-                                editTlo2.setError("tIo>> setting cannot be more than 100");
+                        get_tl = Integer.parseInt((editTl.getText().toString()));
+                        Log.d(TAG, "Mikro result tIƟ> setting from apps before process " + get_tl);
+                        if (get_tl < 1) {
+                            editTl.setError("tIƟ> setting cannot be less than 1");
+                            return;
+                        } else if (get_tl > 200) {
+                            editTl.setError("tIƟ> setting cannot be more than 200");
+                            return;
+                        }
+
+                        tl_result= hexStringToStringArray(Integer.toHexString(get_tl));
+                        tl_1 = tl_result[0];
+                        tl_0= tl_result[1];
+                        Log.d(TAG, "Mikro result tIƟ> in Hex " + tl_1 +tl_0);
+                    }
+                    request = request + tl_1 + tl_0;
+                    Log.d(TAG, "Mikro after tIƟ> " + request);
+
+                    //edit kIƟ> Setting
+                    if (TextUtils.isEmpty(editKlo.getText().toString())) {
+                        editKlo.setError("kIƟ> setting cannot be empty");
+                        return;
+                    } else {
+                        get_klo_d = Double.parseDouble((editKlo.getText().toString()));
+                        Log.d(TAG, "Mikro result kIƟ> setting from apps before process " + get_klo_d);
+                        get_klo = StepParam.getstep0(get_klo_d,100,150);
+                        Log.d(TAG, "Mikro result kIƟ> setting from apps after process " + get_klo);
+                        if (get_klo==0){
+                            if (get_klo_d<1.00) {
+                                editKlo.setError("kIƟ> setting cannot be less than 1.00");
+                            }else if (get_klo_d>1.50){
+                                editKlo.setError("kIƟ> setting cannot be more than 1.50");
                             }
                             return;
                         }
-                        String TI2_display=df2.format(get_tlo2/100.00);
-                        editTlo2.setText(TI2_display);
-                        tlo2_result= hexStringToStringArray(Integer.toHexString(get_tlo2));
-                        tlo2_1 = tlo2_result[0];
-                        tlo2_0= tlo2_result[1];
-                        Log.d(TAG, "Mikro result tIo>> in Hex " + tlo2_1 +tlo2_0);
+                        String klo_display=df2.format(get_klo/100.00);
+                        editKlo.setText(klo_display);
+                        klo_result= hexStringToStringArray(Integer.toHexString(get_klo));
+                        klo_1 = klo_result[0];
+                        klo_0= klo_result[1];
+                        Log.d(TAG, "Mikro result kIƟ> in Hex " + klo_1 +klo_0);
                     }
-                    request = request + tlo2_1 + tlo2_0;
-                    Log.d(TAG, "Mikro after tIo>> " + request);
+                    request = request + klo_1 + klo_0;
+                    Log.d(TAG, "Mikro after kIƟ> " + request);
+
+                    //edit Ɵ Trip Setting
+                    if (TextUtils.isEmpty(editTrip.getText().toString())) {
+                        editTrip.setError("Ɵ Trip setting cannot be empty");
+                        return;
+                    } else {
+                        get_trip = Integer.parseInt((editTrip.getText().toString()));
+                        Log.d(TAG, "Mikro result Ɵ Trip setting from apps before process " + get_trip);
+                        if (get_trip<50) {
+                            editTrip.setError("Ɵ Trip setting cannot be less than 50");
+                            return;
+                        }else if (get_trip>200){
+                            editTrip.setError("Ɵ Trip setting cannot be more than 200");
+                            return;
+                        }
+                        trip_result= hexStringToStringArray(Integer.toHexString(get_trip));
+                        trip_1 = trip_result[0];
+                        trip_0= trip_result[1];
+                        Log.d(TAG, "Mikro result Ɵ Trip in Hex " + trip_1 +trip_0);
+                    }
+                    request = request + trip_1 + trip_0;
+                    Log.d(TAG, "Mikro after Ɵ Trip " + request);
+
+                    //edit Alarm Ɵ> Setting
+                    if (TextUtils.isEmpty(editAlarm.getText().toString())) {
+                        editAlarm.setError("Ɵ Alarm setting cannot be empty");
+                        return;
+                    } else {
+                        get_alarm = Integer.parseInt((editAlarm.getText().toString()));
+                        Log.d(TAG, "Mikro result Ɵ Alarm setting from apps before process " + get_alarm);
+                        if (get_alarm<50) {
+                            editAlarm.setError("Ɵ Alarm setting cannot be less than 50");
+                            return;
+                        }else if (get_alarm>200){
+                            editAlarm.setError("Ɵ Alarm setting cannot be more than 200");
+                            return;
+                        }
+
+                        alarm_result= hexStringToStringArray(Integer.toHexString(get_alarm));
+                        alarm_1 = alarm_result[0];
+                        alarm_0= alarm_result[1];
+                        Log.d(TAG, "Mikro result Ɵ Alarm in Hex " + alarm_1 +alarm_0);
+                    }
+                    request = request + alarm_1 + alarm_0;
+                    Log.d(TAG, "Mikro after Ɵ Alarm " + request);
 
                 //obtain CRC
                 int[] ans = crccheck.getCRC(request);
@@ -327,7 +287,7 @@ public class thermal_overload extends BaseActivity implements TagDiscovery.onTag
                 }
             }
         });
-*/
+
         readCode = new Runnable() {
             @Override
             public void run() {
@@ -468,20 +428,20 @@ public class thermal_overload extends BaseActivity implements TagDiscovery.onTag
         mBuffer [0] = (byte)0x01;
         mBuffer [1] = (byte)0x10;
         mBuffer [2] = (byte)0x01;
-        mBuffer [3] = (byte)0x1e;
+        mBuffer [3] = (byte)0x0E;
         mBuffer [4] = (byte)0x00;
         mBuffer [5] = (byte)0x05;
         mBuffer [6] = (byte)0x0a;
-        mBuffer [7] = (byte)Integer.parseInt(Io_1,16);
-        mBuffer [8] = (byte)Integer.parseInt(Io_0,16);
-        mBuffer [9] = (byte)0x00;
-        mBuffer [10] = (byte)delay_spin;
-        mBuffer [11] = (byte)Integer.parseInt(tlo_1,16);
-        mBuffer [12] = (byte)Integer.parseInt(tlo_0,16);;
-        mBuffer [13] = (byte)Integer.parseInt(ktlo_1,16);
-        mBuffer [14] = (byte)Integer.parseInt(ktlo_0,16);
-        mBuffer [15] = (byte)Integer.parseInt(Io2_1,16);
-        mBuffer [16] = (byte)Integer.parseInt(Io2_0,16);
+        mBuffer [7] = (byte)Integer.parseInt(I_1,16);
+        mBuffer [8] = (byte)Integer.parseInt(I_0,16);
+        mBuffer [9] = (byte)Integer.parseInt(tl_1,16);
+        mBuffer [10] = (byte)Integer.parseInt(tl_0,16);;
+        mBuffer [11] = (byte)Integer.parseInt(klo_1,16);
+        mBuffer [12] = (byte)Integer.parseInt(klo_0,16);
+        mBuffer [13] = (byte)Integer.parseInt(trip_1,16);
+        mBuffer [14] = (byte)Integer.parseInt(trip_0,16);
+        mBuffer [15] = (byte)Integer.parseInt(alarm_1,16);
+        mBuffer [16] = (byte)Integer.parseInt(alarm_0,16);
         mBuffer [17] = (byte)Integer.parseInt(crc_high,16);
         mBuffer [18] = (byte)Integer.parseInt(crc_low,16);
 
@@ -500,15 +460,15 @@ public class thermal_overload extends BaseActivity implements TagDiscovery.onTag
         mBuffer [0] = (byte)0x01;
         mBuffer [1] = (byte)0x03;
         mBuffer [2] = (byte)0x02;
-        mBuffer [3] = (byte)0x1E;
+        mBuffer [3] = (byte)0x0E;
         mBuffer [4] = (byte)0x00;
         mBuffer [5] = (byte)0x05;
-        //0xF645 when address start from 011e
-      //  mBuffer [6] = (byte)0xe4;
-       // mBuffer [7] = (byte)0x33;
-        //0xB245 when address start from 021e
-        mBuffer [6] = (byte)0xe4;
-        mBuffer [7] = (byte)0x77;
+        //0xF645 when address start from 010e
+      //  mBuffer [6] = (byte)0xe5;
+       // mBuffer [7] = (byte)0xf6;
+        //0xB245 when address start from 020e
+        mBuffer [6] = (byte)0xe5;
+        mBuffer [7] = (byte)0xb2;
 
         mAction = ActionCode.SYNC;
         fillView(mAction);
