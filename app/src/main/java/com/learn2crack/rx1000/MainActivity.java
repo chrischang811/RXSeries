@@ -265,6 +265,10 @@ public class MainActivity extends AppCompatActivity implements TagDiscovery.onTa
             Intent intent = new Intent(MainActivity.this, thermal_overload.class);
             intent.putExtra("device_bits",bits);
             startActivity(intent);
+        } else if (id == R.id.nav_item_six) {
+            Intent intent = new Intent(MainActivity.this, cold_load.class);
+            intent.putExtra("device_bits",bits);
+            startActivity(intent);
         }
 
 
@@ -738,7 +742,7 @@ public class MainActivity extends AppCompatActivity implements TagDiscovery.onTa
         String[] putftmpara1 = new String[message.length];
         int [] temp = new int[0];
         int [] tempA = new int[0];
-        int [] temp1 = new int[0];
+
         byte tempMsg = 0;
         String msg= "";
         String joined = null,append = null;

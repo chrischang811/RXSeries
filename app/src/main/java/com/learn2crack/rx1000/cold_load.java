@@ -26,6 +26,8 @@ import com.st.st25sdk.STLog;
 import com.st.st25sdk.TagHelper;
 import com.st.st25sdk.type5.st25dv.ST25DVTag;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -51,10 +53,9 @@ public class cold_load extends BaseActivity implements TagDiscovery.onTagDiscove
     private int mMaxPayloadSizeRx = 32;
 
     private int mOffset;
-    private int get_Io,delay_spin_Io,get_tlo,get_ktlo, get_tlo2, get_Io2, delay_spin;
-    double get_Io_d, get_tlo_d, get_ktIo_d, get_Io2_d, get_tlo2_d;
-    private String Io_result[], tlo_result[],ktlo_result[], Io2_result[],tlo2_result[];
-    private String Io_1,Io_0,tlo_1,tlo_0,ktlo_1,ktlo_0,Io2_1,Io2_0,tlo2_1,tlo2_0,crc_low,crc_high;
+
+    private String setCL_H,setCL_L,crc_low,crc_high;
+    private String[] set_CL=new String[16];
 
     static private NFCTag mftmTag;
     static private NfcAdapter mNfcAdapter;
@@ -65,8 +66,8 @@ public class cold_load extends BaseActivity implements TagDiscovery.onTagDiscove
 
     Handler handler = new Handler();
     private Button writebtn, readbtn;
-    private Spinner spinner1,spinner2;
-    private EditText editIo,editTlo,editKtlo,editIo2,editTlo2;
+    private Spinner CLPUI1,CLPUI2, CLPUI3, CLPUIo1, CLPUIo2 ,CLPUIƟ;
+
     private boolean readRun = false;
     private boolean writeRun = false;
 
@@ -99,14 +100,12 @@ public class cold_load extends BaseActivity implements TagDiscovery.onTagDiscove
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         FrameLayout contentFrameLayout = (FrameLayout) findViewById(R.id.content_frame);
-        getLayoutInflater().inflate(R.layout.thermal, contentFrameLayout);
-      //  cold_load.this.setTitle("THERMAL OVERLOAD");
+        getLayoutInflater().inflate(R.layout.cold_load, contentFrameLayout);
+        cold_load.this.setTitle("COLD LOAD");
         mNfcAdapter = NfcAdapter.getDefaultAdapter(this); //check NFC hardware available
         mPendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
-        spinner1=(Spinner)findViewById(R.id.IƟ_spinner);
-        spinner1.setOnItemSelectedListener(listener);
-        /*
-        readbtn = findViewById(R.id.btn_read_ftm);
+
+        readbtn = findViewById(R.id.btn_read_cl);
         readbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -120,200 +119,104 @@ public class cold_load extends BaseActivity implements TagDiscovery.onTagDiscove
             }
         });
 
-        editIo = (EditText) findViewById(R.id.edit_Io);
+        CLPUI1=(Spinner)findViewById(R.id.CLPUI1_op);
+        CLPUI1.setOnItemSelectedListener(listener);
 
-        spinner1=(Spinner)findViewById(R.id.Io_delay_option);
-        spinner1.setOnItemSelectedListener(listener);
+        CLPUI2=(Spinner)findViewById(R.id.CLPUI2_op);
+        CLPUI2.setOnItemSelectedListener(listener);
 
-        editTlo = (EditText) findViewById(R.id.edit_tlo);
+        CLPUI3=(Spinner)findViewById(R.id.CLPUI3_op);
+        CLPUI3.setOnItemSelectedListener(listener);
 
-        editKtlo=(EditText)findViewById(R.id.edit_ktIo);
+        CLPUIo1=(Spinner)findViewById(R.id.CLPUIo1_op);
+        CLPUIo1.setOnItemSelectedListener(listener);
 
-        spinner2=(Spinner)findViewById(R.id.Io2_op);
-        spinner2.setOnItemSelectedListener(listener);
+        CLPUIo2=(Spinner)findViewById(R.id.CLPUIo2_op);
+        CLPUIo2.setOnItemSelectedListener(listener);
 
-        editIo2 = (EditText) findViewById(R.id.edit_Io2);
+        CLPUIƟ=(Spinner)findViewById(R.id.CLPUIƟ_op);
+        CLPUIƟ.setOnItemSelectedListener(listener);
 
-        editTlo2 = (EditText) findViewById(R.id.edit_tIo2);
 
-        writebtn = findViewById(R.id.btn_write_ef);
+        writebtn = findViewById(R.id.btn_write_cl);
         writebtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(!writeRun){
-                String request = "0110010800060c";
+                    String request = "01100113000102";
 
-                Log.d(TAG, "Mikro sent: " + request);
+                    Log.d(TAG, "Mikro begin: " + request);
 
-                    //edit I> Setting
-                    if (TextUtils.isEmpty(editIo.getText().toString())) {
-                        editIo.setError("Io> setting cannot be empty");
-                        return;
-                    } else {
-                        get_Io_d = Double.parseDouble((editIo.getText().toString()));
-                        Log.d(TAG, "Mikro result Io> setting from apps before process " + get_Io_d);
-                        get_Io = StepParam.getstep3(get_Io_d,10,1000);
-                        Log.d(TAG, "Mikro result Io> setting from apps after process " + get_Io);
-                        if (get_Io==0){
-                            if (get_Io_d<=0.1) {
-                                editIo.setError("I> setting cannot be less than 0.1");
-                            }else if (get_Io_d>10){
-                                editIo.setError("I> setting cannot be more than 10");
-                            }
-                            return;
-                        }
-                        String I1_display=df2.format(get_Io/100.00);
-                        editIo.setText(I1_display);
-                        Io_result= hexStringToStringArray(Integer.toHexString(get_Io));
-                        Io_1 = Io_result[0];
-                        Io_0= Io_result[1];
-                        Log.d(TAG, "Mikro result Io in Hex " + Io_1 +Io_0);
-                    }
-                    request = request + Io_1 + Io_0;
-                    Log.d(TAG, "Mikro after Io " + request);
-
-                    //Delay Type
-                    String delay = String.valueOf(spinner1.getSelectedItem());
-                    Log.d(TAG, "Mikro: delay spinner: " + delay);
-                    if (delay.equals("DT")) {
-                        delay_spin = 0;
-                        request = request + "0000";
-                        Log.d(TAG, "Mikro: delay spinner " + request);
-                    } else if (delay.equals("NI")) {
-                        delay_spin = 1;
-                        request = request + "0001";
-                        Log.d(TAG, "Mikro: delay spinner " + request);
-                    } else if (delay.equals("VI")) {
-                        delay_spin = 2;
-                        request = request + "0002";
-                        Log.d(TAG, "Mikro: delay spinner " + request);
-                    } else if (delay.equals("EI")) {
-                        delay_spin = 3;
-                        request = request + "0003";
-                        Log.d(TAG, "Mikro: delay spinner " + request);
-                    }else if (delay.equals("LTI")) {
-                        delay_spin = 4;
-                        request = request + "0004";
-                        Log.d(TAG, "Mikro: delay spinner " + request);
-                    } else if (delay.equals("NI1.3/10")) {
-                        delay_spin = 5;
-                        request = request + "0005";
-                        Log.d(TAG, "Mikro: delay spinner " + request);
+                    //CLPU I>
+                    String getCLPUI1 = String.valueOf(CLPUI1.getSelectedItem());
+                    if (getCLPUI1.equals("OFF")) {
+                        set_CL[15]="0";
+                        Log.d(TAG, "Mikro CLPUI1 " + set_CL[15]);
+                    } else if (getCLPUI1.equals("ON")) {
+                        set_CL[15]="1";
+                        Log.d(TAG, "Mikro CLPUI1 " + set_CL[15]);
                     }
 
-                    //edit tIo> Setting
-                    if (TextUtils.isEmpty(editTlo.getText().toString())) {
-                        editTlo.setError("tIo> setting cannot be empty");
-                        return;
-                    } else {
-                        get_tlo_d = Double.parseDouble((editTlo.getText().toString()));
-                        Log.d(TAG, "Mikro result tIo> setting from apps before process " + get_tlo_d);
-                        get_tlo = StepParam.getstep1(get_tlo_d,3,10000);
-                        Log.d(TAG, "Mikro result tIo> setting from apps after process " + get_tlo);
-                        if (get_tlo==0){
-                            if (get_tlo_d<0.03) {
-                                editTlo.setError("tIo> setting cannot be less than 0.03");
-                            }else if (get_tlo_d>100){
-                                editTlo.setError("tIo> setting cannot be more than 100");
-                            }
-                            return;
-                        }
-                        String Tlo_display=df2.format(get_tlo/100.00);
-                        editTlo.setText(Tlo_display);
-                        tlo_result= hexStringToStringArray(Integer.toHexString(get_tlo));
-                        tlo_1 = tlo_result[0];
-                        tlo_0= tlo_result[1];
-                        Log.d(TAG, "Mikro result tIo> in Hex " + tlo_1 +tlo_0);
+                    //CLPU I>>
+                    String getCLPUI2 = String.valueOf(CLPUI2.getSelectedItem());
+                    if (getCLPUI2.equals("OFF")) {
+                        set_CL[14]="0";
+                        Log.d(TAG, "Mikro CLPUI >> " + set_CL[14]);
+                    } else if (getCLPUI2.equals("ON")) {
+                        set_CL[14]="1";
+                        Log.d(TAG, "Mikro CLPUI >> " + set_CL[14]);
                     }
-                    request = request + tlo_1 + tlo_0;
-                    Log.d(TAG, "Mikro after tIo> " + request);
 
-                    //edit ktIo> Setting
-                    if (TextUtils.isEmpty(editKtlo.getText().toString())) {
-                        editKtlo.setError("ktIo> setting cannot be empty");
-                        return;
-                    } else {
-                        get_ktIo_d = Double.parseDouble((editKtlo.getText().toString()));
-                        Log.d(TAG, "Mikro result ktIo> setting from apps before process " + get_ktIo_d);
-                        get_ktlo = StepParam.getstep0(get_ktIo_d,1,100);
-                        Log.d(TAG, "Mikro result ktIo> setting from apps after process " + get_ktlo);
-                        if (get_ktlo==0){
-                            if (get_ktIo_d<0.01) {
-                                editKtlo.setError("ktIo> setting cannot be less than 0.01");
-                            }else if (get_ktIo_d>1){
-                                editKtlo.setError("ktIo> setting cannot be more than 1");
-                            }
-                            return;
-                        }
-                        ktlo_result= hexStringToStringArray(Integer.toHexString(get_ktlo));
-                        ktlo_1 = ktlo_result[0];
-                        ktlo_0= ktlo_result[1];
-                        Log.d(TAG, "Mikro result ktIo> in Hex " + ktlo_1 +ktlo_0);
+                    //CLPU I>>>
+                    String getCLPUI3 = String.valueOf(CLPUI3.getSelectedItem());
+                    if (getCLPUI3.equals("OFF")) {
+                        set_CL[13]="0";
+                        Log.d(TAG, "Mikro CLPUI3 " + set_CL[13]);
+                    } else if (getCLPUI3.equals("ON")) {
+                        set_CL[13]="1";
+                        Log.d(TAG, "Mikro CLPUI3 " + set_CL[13]);
                     }
-                    request = request + ktlo_1 + ktlo_0;
-                    Log.d(TAG, "Mikro after ktIo> " + request);
 
-                    //edit Io>> Setting
-                    String spin2 = String.valueOf(spinner2.getSelectedItem());
-                    if (spin2.equals("OFF")){
-                        editIo2.setText("0");
-                        Io2_1 = "00";
-                        Io2_0= "00";
-                    } else {
-                        if (TextUtils.isEmpty(editIo2.getText().toString())) {
-                            editIo2.setError("Io>> setting cannot be empty");
-                            return;
-                        } else {
-                            get_Io2_d = Double.parseDouble((editIo2.getText().toString()));
-                            Log.d(TAG, "Mikro result Io2 setting from apps before process " + get_Io2_d);
-
-                            get_Io2 = StepParam.getstep2(get_Io2_d, 10, 10000);
-                            Log.d(TAG, "Mikro result Io2 setting from apps after process " + get_Io2);
-                            if (get_Io2 == 0) {
-                                if (get_Io2_d < 0.1) {
-                                    editIo2.setError("Io>> setting cannot be less than 0.5");
-                                } else if (get_Io2_d > 100) {
-                                    editIo2.setError("Io>> setting cannot be more than 100");
-                                }
-                                return;
-                            }
-                        }
-                        String I2_display=df2.format(get_Io2/100.00);
-                        editIo2.setText(I2_display);
-                        Io2_result= hexStringToStringArray(Integer.toHexString(get_Io2));
-                        Io2_1 = Io2_result[0];
-                        Io2_0= Io2_result[1];
-                        Log.d(TAG, "Mikro result Io2 in Hex " + Io2_1 +Io2_0);
+                    //CLPU Io>
+                    String getCLPUIo1 = String.valueOf(CLPUIo1.getSelectedItem());
+                    if (getCLPUIo1.equals("OFF")) {
+                        set_CL[12]="0";
+                        Log.d(TAG, "Mikro CLPU Io> " + set_CL[12]);
+                    } else if (getCLPUIo1.equals("ON")) {
+                        set_CL[12]="1";
+                        Log.d(TAG, "Mikro CLPU Io> " + set_CL[12]);
                     }
-                    request = request + Io2_1 + Io2_0;
-                    Log.d(TAG, "Mikro after Io2 " + request);
 
-                    //edit tIo>> Setting
-                    if (TextUtils.isEmpty(editTlo2.getText().toString())) {
-                        editTlo2.setError("tIo>> setting cannot be empty");
-                        return;
-                    } else {
-                        get_tlo2_d = Double.parseDouble((editTlo2.getText().toString()));
-                        Log.d(TAG, "Mikro result tIo>> setting from apps before process " + get_tlo2_d);
-                        get_tlo2 = StepParam.getstep3(get_tlo2_d,3,10000);
-                        Log.d(TAG, "Mikro result tIo>> setting from apps after process " + get_tlo2);
-                        if (get_tlo2==0){
-                            if (get_tlo2_d<0.03) {
-                                editTlo2.setError("tIo>> setting cannot be less than 0.03");
-                            }else if (get_tlo2_d>100){
-                                editTlo2.setError("tIo>> setting cannot be more than 100");
-                            }
-                            return;
-                        }
-                        String TI2_display=df2.format(get_tlo2/100.00);
-                        editTlo2.setText(TI2_display);
-                        tlo2_result= hexStringToStringArray(Integer.toHexString(get_tlo2));
-                        tlo2_1 = tlo2_result[0];
-                        tlo2_0= tlo2_result[1];
-                        Log.d(TAG, "Mikro result tIo>> in Hex " + tlo2_1 +tlo2_0);
+                    //CLPU Io>>
+                    String getCLPUIo2 = String.valueOf(CLPUIo2.getSelectedItem());
+                    if (getCLPUIo2.equals("OFF")) {
+                        set_CL[11]="0";
+                        Log.d(TAG, "Mikro CLPU Io>> " + set_CL[11]);
+                    } else if (getCLPUIo2.equals("ON")) {
+                        set_CL[11]="1";
+                        Log.d(TAG, "Mikro CLPU Io>> " + set_CL[11]);
                     }
-                    request = request + tlo2_1 + tlo2_0;
-                    Log.d(TAG, "Mikro after tIo>> " + request);
+
+                    //CLPU IƟ>
+                    String getCLPUIƟ = String.valueOf(CLPUIƟ.getSelectedItem());
+                    if (getCLPUIƟ.equals("OFF")) {
+                        set_CL[10]="0";
+                        Log.d(TAG, "Mikro CLPU IƟ " + set_CL[10]);
+                    } else if (getCLPUIƟ.equals("ON")) {
+                        set_CL[10]="1";
+                        Log.d(TAG, "Mikro CLPU IƟ " + set_CL[10]);
+                    }
+
+                    String CL_setting= StringUtils.join(set_CL, "");
+                    Log.d(TAG, "Mikro output setting in binary: " +CL_setting);
+                    int myCLInt = Integer.parseInt(CL_setting, 2);
+                   // int myCLInt =0;
+                    Log.d(TAG, "Mikro output setting in integer: " +myCLInt);
+                    String myCLSetting []= hexStringToStringArray(Integer.toHexString(myCLInt));
+                    setCL_H= myCLSetting[0];
+                    setCL_L= myCLSetting[1];
+                    request = request +setCL_H+setCL_L;
+                    Log.d(TAG, "Mikro after Cold load setting: " +request);
 
                 //obtain CRC
                 int[] ans = crccheck.getCRC(request);
@@ -330,7 +233,7 @@ public class cold_load extends BaseActivity implements TagDiscovery.onTagDiscove
                 }
             }
         });
-*/
+
         readCode = new Runnable() {
             @Override
             public void run() {
@@ -467,28 +370,18 @@ public class cold_load extends BaseActivity implements TagDiscovery.onTagDiscove
         }
 
         // int i = 1;
-        mBuffer = new byte[21];
+        mBuffer = new byte[11];
         mBuffer [0] = (byte)0x01;
         mBuffer [1] = (byte)0x10;
         mBuffer [2] = (byte)0x01;
-        mBuffer [3] = (byte)0x08;
+        mBuffer [3] = (byte)0x13;
         mBuffer [4] = (byte)0x00;
-        mBuffer [5] = (byte)0x06;
-        mBuffer [6] = (byte)0x0c;
-        mBuffer [7] = (byte)Integer.parseInt(Io_1,16);
-        mBuffer [8] = (byte)Integer.parseInt(Io_0,16);
-        mBuffer [9] = (byte)0x00;
-        mBuffer [10] = (byte)delay_spin;
-        mBuffer [11] = (byte)Integer.parseInt(tlo_1,16);
-        mBuffer [12] = (byte)Integer.parseInt(tlo_0,16);;
-        mBuffer [13] = (byte)Integer.parseInt(ktlo_1,16);
-        mBuffer [14] = (byte)Integer.parseInt(ktlo_0,16);
-        mBuffer [15] = (byte)Integer.parseInt(Io2_1,16);
-        mBuffer [16] = (byte)Integer.parseInt(Io2_0,16);
-        mBuffer [17] = (byte)Integer.parseInt(tlo2_1,16);
-        mBuffer [18] = (byte)Integer.parseInt(tlo2_0,16);
-        mBuffer [19] = (byte)Integer.parseInt(crc_high,16);
-        mBuffer [20] = (byte)Integer.parseInt(crc_low,16);
+        mBuffer [5] = (byte)0x01;
+        mBuffer [6] = (byte)0x02;
+        mBuffer [7] = (byte)Integer.parseInt(setCL_H,16);
+        mBuffer [8] = (byte)Integer.parseInt(setCL_L,16);
+        mBuffer [9] = (byte)Integer.parseInt(crc_high,16);
+        mBuffer [10] = (byte)Integer.parseInt(crc_low,16);
 
         Log.d(TAG, "Mikro: delay type " + mBuffer[10]);
         mAction = ActionCode.SINGLE;
@@ -505,14 +398,14 @@ public class cold_load extends BaseActivity implements TagDiscovery.onTagDiscove
         mBuffer [0] = (byte)0x01;
         mBuffer [1] = (byte)0x03;
         mBuffer [2] = (byte)0x02;
-        mBuffer [3] = (byte)0x1E;
+        mBuffer [3] = (byte)0x13;
         mBuffer [4] = (byte)0x00;
-        mBuffer [5] = (byte)0x05;
-        //0xF645 when address start from 0108
-      //  mBuffer [6] = (byte)0xe4;
+        mBuffer [5] = (byte)0x01;
+        //0x3374 when address start from 0113
+      //  mBuffer [6] = (byte)0x74;
        // mBuffer [7] = (byte)0x33;
-        //0xB245 when address start from 0208
-        mBuffer [6] = (byte)0xe4;
+        //0x7774 when address start from 0213
+        mBuffer [6] = (byte)0x74;
         mBuffer [7] = (byte)0x77;
 
         mAction = ActionCode.SYNC;
@@ -1008,9 +901,7 @@ public class cold_load extends BaseActivity implements TagDiscovery.onTagDiscove
         final String finalMsg = msg;
         Log.d(TAG, "Mikro FTM finalMsg: " + finalMsg);
 
-        int Io_set=0, Io_delay=0,tlo_set=0,ktlo_set=0, Io2_opt=0, Io2_set=0, tlo2_set=0;
-        double Io_set_double=0, tlo_set_double=0,ktlo_set_double=0,Io2_set_double=0, tlo2_set_double=0;
-        String IoString="",tloString="",ktloString="",Io2String="",tlo2String="";
+        int [] temp = new int[0];
         for(int i = 1; i < message.length; i+=2) {
             int value = Integer.parseInt(putftmpara[i], 16);
             if (value <= 15) {
@@ -1034,83 +925,61 @@ public class cold_load extends BaseActivity implements TagDiscovery.onTagDiscove
 
             switch (i) {
                 case 3:
-                    Io_set= Integer.parseInt(element, 16);
-                    Io_set_double=Io_set/100.00;
-                    IoString=df2.format(Io_set_double);
-                    Log.d(TAG, "Mikro Io> converted: :   " + IoString);
-                    break;
-                case 5:
-                    Io_delay=Integer.parseInt(element, 16);
-                    Log.d(TAG, "Mikro Io_delay:   " + Io_delay);
-                    break;
-                case 7:
-                    tlo_set=Integer.parseInt(element, 16);
-                    tlo_set_double=tlo_set/100.00;
-                    tloString=df2.format(tlo_set_double);
-                    Log.d(TAG, "Mikro tlo String:   " + tloString);
-                    break;
-                case 9:
-                    ktlo_set=Integer.parseInt(element, 16);
-                    ktlo_set_double=ktlo_set/100.00;
-                    ktloString=df2.format(ktlo_set_double);
-                    Log.d(TAG, "Mikro ktlo String:   " + ktloString);
-                    break;
-                case 11:
-                    double Io2_set_d=Integer.parseInt(element,16);
-                    Log.d(TAG, "Mikro FTM Io2_set:   " + Io2_set_d);
-                    if (Io2_set_d>0){
-                        Io2_opt =1;
-                        Io2_set_double=Io2_set_d/100.00;
-                        Io2String= df2.format(Io2_set_double);
-                        //Log.d(TAG, "Mikro FTM Io2_set:   " + Io2String);
-                    } else {
-                        Io2_opt=0;
+                    Log.d(TAG, "Mikro FTM output in Hex: " + element);
+                    int val = Integer.parseInt(element, 16);
+                    int OutR = val;
+                    String OutputR = Integer.toBinaryString(0x10000 | OutR).substring(1);
+                    Log.d(TAG, "Mikro FTM cold load: " + OutputR);
+                    char ch0 [] = OutputR.toCharArray();
+                    temp = new int [ch0.length];
+                    for (int y=0;y<ch0.length;y++){
+                        temp[y]=Integer.parseInt(""+ch0[y]);
+                        Log.d(TAG, "Mikro FTM cold load by bit "+y+": " + temp[y]);
                     }
-                    break;
-                case 13:
-                    tlo2_set=Integer.parseInt(element, 16);
-                    tlo2_set_double=tlo2_set/100.00;
-                    tlo2String=df2.format(tlo2_set_double);
-                    Log.d(TAG, "Mikro FTM tlo2_set:   " + tlo2String);
                     break;
 
             }
         }
 
-        final int  finalIodelay=Io_delay,finalIo2op=Io2_opt;
-        final String  finalIo=IoString,finaltlo=tloString,finalktlo=ktloString,finalIo2=Io2String,finaltlo2=tlo2String;
+        final int[] finalTemp = temp;
         runOnUiThread(new Runnable() {
             public void run() {
 
-                editIo.setText(finalIo);
-
-                if (finalIodelay==0){
-                    spinner1.setSelection(0);
-                } else if (finalIodelay==1){
-                    spinner1.setSelection(1);
-                }else if (finalIodelay==2){
-                    spinner1.setSelection(2);
-                }else if (finalIodelay==3){
-                    spinner1.setSelection(3);
-                }else if (finalIodelay==4){
-                    spinner1.setSelection(4);
-                }else if (finalIodelay==5){
-                    spinner1.setSelection(5);
+                if (finalTemp[15] ==0){
+                    CLPUI1.setSelection(0);
+                } else if (finalTemp[15] ==1) {
+                    CLPUI1.setSelection(1);
                 }
 
-                editTlo.setText(finaltlo);
-                editKtlo.setText(finalktlo);
-
-                if (finalIo2op==0){
-                    spinner2.setSelection(0);
-                    editIo2.setText("0");
-                } else if (finalIo2op==1){
-                    spinner2.setSelection(1);
-                    editIo2.setText(finalIo2);
+                if (finalTemp[14] ==0){
+                    CLPUI2.setSelection(0);
+                } else if (finalTemp[14] ==1) {
+                    CLPUI2.setSelection(1);
                 }
 
-                editTlo2.setText(finaltlo2);
+                if (finalTemp[13] ==0){
+                    CLPUI3.setSelection(0);
+                } else if (finalTemp[13] ==1) {
+                    CLPUI3.setSelection(1);
+                }
 
+                if (finalTemp[12] ==0){
+                    CLPUIo1.setSelection(0);
+                } else if (finalTemp[12] ==1) {
+                    CLPUIo1.setSelection(1);
+                }
+
+                if (finalTemp[11] ==0){
+                    CLPUIo2.setSelection(0);
+                } else if (finalTemp[11] ==1) {
+                    CLPUIo2.setSelection(1);
+                }
+
+                if (finalTemp[10] ==0){
+                    CLPUIƟ.setSelection(0);
+                } else if (finalTemp[10] ==1) {
+                    CLPUIƟ.setSelection(1);
+                }
             }
         });
         return joined;

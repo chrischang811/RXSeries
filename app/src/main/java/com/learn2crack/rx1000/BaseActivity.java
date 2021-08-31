@@ -60,6 +60,10 @@ public class BaseActivity extends AppCompatActivity implements NavigationView.On
             Intent intent = new Intent(BaseActivity.this, thermal_overload.class);
             intent.putExtra("device_bits", bits);
             startActivity(intent);
+        } else if (id == R.id.nav_item_six) {
+            Intent intent = new Intent(BaseActivity.this, cold_load.class);
+            intent.putExtra("device_bits",bits);
+            startActivity(intent);
         }
 
         return false;
